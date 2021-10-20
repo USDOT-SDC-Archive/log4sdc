@@ -1,0 +1,13 @@
+
+.idea/
+.DS_Store
+.coverage
+**/__pycache__/**
+*.pyc
+*.zip
+**/.terraform/
+**/terraform.tfstate*
+
+v-env/
+
+**/.venv
