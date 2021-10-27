@@ -91,7 +91,7 @@ Logging, alert, and alarm facilities for the SDC Platform
 * Clone the log4sdc repository into a Linux environment (e.g., SDC build machine)
 * Change to the log4sdc folder
 * Change to the sns terraform folder
-  * cd src/sns/terraform/
+  * cd sns/terraform/
 * Execute the following commands to deploy the topics:
   * terraform init
   * terraform apply -var-file=config/dev.tfvars
@@ -110,6 +110,72 @@ Logging, alert, and alarm facilities for the SDC Platform
 * For all prod-log4sdc-* topics:
   * Delete subscriptions
   * Delete topics themselves.
+
+
+### log4sdc Lambda Payer Installation
+
+
+#### Deployment Plan
+* Clone the log4sdc repository into a Linux environment (e.g., SDC build machine)
+* Change to the log4sdc folder
+* Change to the lambda-layer deploy folder
+  * cd lambda-layer/deploy/
+* Execute the following commands to deploy the lambda layer:
+  * ./deploy-common-layer.sh
+
+
+#### Test Plan
+* Log on into the AWS Console for the SDC system account, navigate to the Lambda configuration
+* Create a test function with Python 3.7+ runtime
+  * The layer is compatible with Python 3.7, 3.8, and 3.9 runtimes
+* Add this code to the function:
+
+```
+import json
+from common.logger_utility import *
+
+def lambda_handler(event, context):
+
+    config = {
+    'project': 'FOO', 
+    'team': 'FOO-BAR', 
+    'sdc_service': 'DATA_INGEST', 
+    'component': 'log4sdc-common', 
+    }
+    
+    LoggerUtility.init(config=config)
+    LoggerUtility.setLevel('DEBUG')
+    LoggerUtility.logDebug("DEBUG Test LoggerUtility")
+    LoggerUtility.logInfo("INFO Test LoggerUtility")
+    LoggerUtility.logWarning("WARN Test LoggerUtility")
+    LoggerUtility.logError("ERROR Test LoggerUtility")
+    LoggerUtility.logCritical("CRITICAL Test LoggerUtility")
+    LoggerUtility.alert("ALERT Test LoggerUtility")
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Hello from Log4SDC Lambda!')
+    }
+```
+
+* Execute function test. Make sure there are no errors and that similar printout is produced:
+
+```
+[DEBUG]	2021-10-27T01:04:10.811Z	e81909a0-196c-4bd2-990f-021732be96c6	DEBUG Test LoggerUtility
+[INFO]	2021-10-27T01:04:10.811Z	e81909a0-196c-4bd2-990f-021732be96c6	INFO Test LoggerUtility
+[WARNING]	2021-10-27T01:04:10.811Z	e81909a0-196c-4bd2-990f-021732be96c6	WARN Test LoggerUtility
+[ERROR]	2021-10-27T01:04:10.812Z	e81909a0-196c-4bd2-990f-021732be96c6	ERROR Test LoggerUtility
+[CRITICAL]	2021-10-27T01:04:12.052Z	e81909a0-196c-4bd2-990f-021732be96c6	CRITICAL Test LoggerUtility
+[ERROR]	2021-10-27T01:04:12.325Z	e81909a0-196c-4bd2-990f-021732be96c6	ALERT Test LoggerUtility
+END RequestId: e81909a0-196c-4bd2-990f-021732be96c6
+REPORT RequestId: e81909a0-196c-4bd2-990f-021732be96c6	Duration: 1796.73 ms	Billed Duration: 1797 ms	Memory Size: 128 MB	Max Memory Used: 67 MB	Init Duration: 332.22 ms
+```
+
+
+#### Rollback Plan
+* Log on into the AWS Console for the SDC system account, navigate to the Lambda configuration
+* Navigate to Lambda Layers, locate log4sdc layer.
+* Navigate to the latest log4sdc layer version and delete it with console controls.
 
 
 <!---                                 -->
