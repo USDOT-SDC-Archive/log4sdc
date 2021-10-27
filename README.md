@@ -232,7 +232,6 @@ Contact Name: sdc-support@dot.gov
 
 ## XV. Code Quality Monitor
 
-[![Code quality status](https://codescene.io/projects/10167/status.svg) Full analysis results at **codescene.io**.](https://codescene.io/projects/10167/jobs/latest-successful/results)
 
 ---
 [Back to top](#toc)
