@@ -20,29 +20,29 @@ resource "aws_sns_topic_subscription" "log4sdc_error_topic_subscription" {
 }
 
 
-resource "aws_sns_topic" "log4sdc_fatal_topic" {
-  #name = "${data.aws_ssm_parameter.environment.value}-log4sdc-fatal-topic"
-  name = "${local.environment}-log4sdc-fatal-topic"
+resource "aws_sns_topic" "log4sdc_critical_topic" {
+  #name = "${data.aws_ssm_parameter.environment.value}-log4sdc-critical-topic"
+  name = "${local.environment}-log4sdc-critical-topic"
   tags = local.global_tags
 }
 
-resource "aws_sns_topic_policy" "log4sdc_fatal_topic_policy" {
-  arn = aws_sns_topic.log4sdc_fatal_topic.arn
+resource "aws_sns_topic_policy" "log4sdc_critical_topic_policy" {
+  arn = aws_sns_topic.log4sdc_critical_topic.arn
   policy = templatefile("aws_sns_topic_policy_default.json", {
       #account_number         = "${data.aws_ssm_parameter.account_number.value}",
       account_number         = "${local.account_number}",
-      topic_arn = aws_sns_topic.log4sdc_fatal_topic.arn
+      topic_arn = aws_sns_topic.log4sdc_critical_topic.arn
   })
 }
 
-resource "aws_sns_topic_subscription" "log4sdc_fatal_topic_subscription" {
-  topic_arn = aws_sns_topic.log4sdc_fatal_topic.arn
+resource "aws_sns_topic_subscription" "log4sdc_critical_topic_subscription" {
+  topic_arn = aws_sns_topic.log4sdc_critical_topic.arn
   protocol  = "email"
   endpoint  = local.support_email
 }
 
-resource "aws_sns_topic_subscription" "log4sdc_fatal_topic_subscription2" {
-  topic_arn = aws_sns_topic.log4sdc_fatal_topic.arn
+resource "aws_sns_topic_subscription" "log4sdc_critical_topic_subscription2" {
+  topic_arn = aws_sns_topic.log4sdc_critical_topic.arn
   protocol  = "sms"
   endpoint  = local.support_sms_number
 }
