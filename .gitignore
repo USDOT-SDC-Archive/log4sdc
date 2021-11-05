@@ -1,0 +1,14 @@
+
+.idea/
+.DS_Store
+.coverage
+**/__pycache__/**
+*.pyc
+*.zip
+**/.terraform/
+**/terraform.tfstate*
+lambda-layer/deploy/python
+
+v-env/
+
+**/.venv
