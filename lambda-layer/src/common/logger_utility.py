@@ -6,6 +6,18 @@ from common.constants import *
 
 class LoggerUtility:
     @staticmethod
+    def get_param(ssm_client, key, default_value=None):
+        if key in os.environ.keys():
+            topic_arn = os.environ[key]
+        else:
+            try:
+                topic_arn = ssm_client.get_parameter(Name='/log4sdc/' + key)['Parameter']['Value']
+            except:
+                topic_arn = default_value
+        return topic_arn
+
+
+    @staticmethod
     def init(project='SDC Platform',
              team='',
              sdc_service='',
@@ -23,6 +35,13 @@ class LoggerUtility:
         if not 'component' in config:
             config['component'] = component
 
+        ssm = boto3.client('ssm')
+        config['TOPIC_ARN_ERROR'] = LoggerUtility.get_param(ssm_client=ssm, key='TOPIC_ARN_ERROR')
+        config['TOPIC_ARN_CRITICAL'] = LoggerUtility.get_param(ssm_client=ssm, key='TOPIC_ARN_CRITICAL')
+        config['TOPIC_ARN_ALERT'] = LoggerUtility.get_param(ssm_client=ssm, key='TOPIC_ARN_ALERT')
+        config['LOG_LEVEL'] = LoggerUtility.get_param(ssm_client=ssm, key='LOG_LEVEL', default_value=Constants.LOGGER_DEFAULT_LOG_LEVEL)
+
+        LoggerUtility.config = config
         LoggerUtility.setLevel()
 
 
@@ -70,7 +89,8 @@ class LoggerUtility:
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.error('%s', message)
         client = boto3.client('sns')
-        response = client.publish(TopicArn=os.environ['TOPIC_ARN_ERROR'], Subject=subject, Message=message)
+        if LoggerUtility.config['TOPIC_ARN_ERROR']:
+            response = client.publish(TopicArn=LoggerUtility.config['TOPIC_ARN_ERROR'], Subject=subject, Message=message)
         return True
 
     @staticmethod
@@ -78,7 +98,8 @@ class LoggerUtility:
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.critical('%s', message)
         client = boto3.client('sns')
-        response = client.publish(TopicArn=os.environ['TOPIC_ARN_CRITICAL'], Subject=subject, Message=message)
+        if LoggerUtility.config['TOPIC_ARN_CRITICAL']:
+            response = client.publish(TopicArn=LoggerUtility.config['TOPIC_ARN_CRITICAL'], Subject=subject, Message=message)
         return True
 
     @staticmethod
@@ -86,7 +107,7 @@ class LoggerUtility:
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.error('%s', message)
         client = boto3.client('sns')
-        response = client.publish(TopicArn=os.environ['TOPIC_ARN_ALERT'], Subject=subject, Message=message)
+        if LoggerUtility.config['TOPIC_ARN_ALERT']:
+            response = client.publish(TopicArn=LoggerUtility.config['TOPIC_ARN_ALERT'], Subject=subject, Message=message)
         return True
-
 
