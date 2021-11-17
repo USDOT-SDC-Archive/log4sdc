@@ -8,20 +8,20 @@ class LoggerUtility:
     @staticmethod
     def get_param(ssm_client, key, default_value=None):
         if key in os.environ.keys():
-            topic_arn = os.environ[key]
+            res = os.environ[key]
         else:
             try:
-                topic_arn = ssm_client.get_parameter(Name='/log4sdc/' + key)['Parameter']['Value']
+                res = ssm_client.get_parameter(Name='/log4sdc/' + key)['Parameter']['Value']
             except:
-                topic_arn = default_value
-        return topic_arn
+                res = default_value
+        return res
 
 
     @staticmethod
-    def init(project='SDC Platform',
+    def setLevel(project='SDC Platform',
              team='',
              sdc_service='',
-             component='',
+             component=Constants.LOGGER_NAME,
              config=None):
         if not config:
             config = {}
@@ -42,11 +42,11 @@ class LoggerUtility:
         config['LOG_LEVEL'] = LoggerUtility.get_param(ssm_client=ssm, key='LOG_LEVEL', default_value=Constants.LOGGER_DEFAULT_LOG_LEVEL)
 
         LoggerUtility.config = config
-        LoggerUtility.setLevel(level=config['LOG_LEVEL'])
+        LoggerUtility.setLevelExec(level=config['LOG_LEVEL'])
 
 
     @staticmethod
-    def setLevel(level=Constants.LOGGER_DEFAULT_LOG_LEVEL):
+    def setLevelExec(level=Constants.LOGGER_DEFAULT_LOG_LEVEL):
         logFormat = '%(asctime)-15s %(levelname)s:%(message)s'
         logging.basicConfig(format=logFormat)
         logger = logging.getLogger(Constants.LOGGER_NAME)
@@ -67,25 +67,25 @@ class LoggerUtility:
         return True
 
     @staticmethod
-    def logDebug(message, subject='Log4SDC DEBUG', userdata=''):
+    def logDebug(message, subject=Constants.LOGGER_NAME + ' DEBUG', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.debug('%s', message)
         return True
 
     @staticmethod
-    def logInfo(message, subject='Log4SDC INFO', userdata=''):
+    def logInfo(message, subject=Constants.LOGGER_NAME + ' INFO', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.info('%s', message)
         return True
 
     @staticmethod
-    def logWarning(message, subject='Log4SDC WARNING', userdata=''):
+    def logWarning(message, subject=Constants.LOGGER_NAME + ' WARNING', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.warning('%s', message)
         return True
 
     @staticmethod
-    def logError(message, subject='Log4SDC ERROR', userdata=''):
+    def logError(message, subject=Constants.LOGGER_NAME + ' ERROR', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.error('%s', message)
         client = boto3.client('sns')
@@ -94,7 +94,7 @@ class LoggerUtility:
         return True
 
     @staticmethod
-    def logCritical(message, subject='Log4SDC CRITICAL', userdata=''):
+    def logCritical(message, subject=Constants.LOGGER_NAME + ' CRITICAL', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.critical('%s', message)
         client = boto3.client('sns')
@@ -103,7 +103,7 @@ class LoggerUtility:
         return True
 
     @staticmethod
-    def alert(message, subject='Log4SDC ALERT', userdata=''):
+    def alert(message, subject=Constants.LOGGER_NAME + ' ALERT', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.error('%s', message)
         client = boto3.client('sns')
