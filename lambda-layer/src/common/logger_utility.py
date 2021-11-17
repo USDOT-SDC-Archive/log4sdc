@@ -42,7 +42,7 @@ class LoggerUtility:
         config['LOG_LEVEL'] = LoggerUtility.get_param(ssm_client=ssm, key='LOG_LEVEL', default_value=Constants.LOGGER_DEFAULT_LOG_LEVEL)
 
         LoggerUtility.config = config
-        LoggerUtility.setLevel()
+        LoggerUtility.setLevel(level=config['LOG_LEVEL'])
 
 
     @staticmethod
@@ -89,7 +89,7 @@ class LoggerUtility:
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.error('%s', message)
         client = boto3.client('sns')
-        if LoggerUtility.config['TOPIC_ARN_ERROR']:
+        if hasattr(LoggerUtility, 'config') and LoggerUtility.config['TOPIC_ARN_ERROR']:
             response = client.publish(TopicArn=LoggerUtility.config['TOPIC_ARN_ERROR'], Subject=subject, Message=message)
         return True
 
@@ -98,7 +98,7 @@ class LoggerUtility:
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.critical('%s', message)
         client = boto3.client('sns')
-        if LoggerUtility.config['TOPIC_ARN_CRITICAL']:
+        if hasattr(LoggerUtility, 'config') and LoggerUtility.config['TOPIC_ARN_CRITICAL']:
             response = client.publish(TopicArn=LoggerUtility.config['TOPIC_ARN_CRITICAL'], Subject=subject, Message=message)
         return True
 
@@ -107,7 +107,7 @@ class LoggerUtility:
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.error('%s', message)
         client = boto3.client('sns')
-        if LoggerUtility.config['TOPIC_ARN_ALERT']:
+        if hasattr(LoggerUtility, 'config') and LoggerUtility.config['TOPIC_ARN_ALERT']:
             response = client.publish(TopicArn=LoggerUtility.config['TOPIC_ARN_ALERT'], Subject=subject, Message=message)
         return True
 
