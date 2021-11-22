@@ -6,10 +6,22 @@ from common.constants import *
 
 class LoggerUtility:
     @staticmethod
-    def init(project='SDC Platform',
+    def get_param(ssm_client, key, default_value=None):
+        if key in os.environ.keys():
+            res = os.environ[key]
+        else:
+            try:
+                res = ssm_client.get_parameter(Name='/log4sdc/' + key)['Parameter']['Value']
+            except:
+                res = default_value
+        return res
+
+
+    @staticmethod
+    def setLevel(project='SDC Platform',
              team='',
              sdc_service='',
-             component='',
+             component=Constants.LOGGER_NAME,
              config=None):
         if not config:
             config = {}
@@ -23,11 +35,18 @@ class LoggerUtility:
         if not 'component' in config:
             config['component'] = component
 
-        LoggerUtility.setLevel()
+        ssm = boto3.client('ssm', region_name='us-east-1')
+        config['TOPIC_ARN_ERROR'] = LoggerUtility.get_param(ssm_client=ssm, key='TOPIC_ARN_ERROR')
+        config['TOPIC_ARN_CRITICAL'] = LoggerUtility.get_param(ssm_client=ssm, key='TOPIC_ARN_CRITICAL')
+        config['TOPIC_ARN_ALERT'] = LoggerUtility.get_param(ssm_client=ssm, key='TOPIC_ARN_ALERT')
+        config['LOG_LEVEL'] = LoggerUtility.get_param(ssm_client=ssm, key='LOG_LEVEL', default_value=Constants.LOGGER_DEFAULT_LOG_LEVEL)
+
+        LoggerUtility.config = config
+        LoggerUtility.setLevelExec(level=config['LOG_LEVEL'])
 
 
     @staticmethod
-    def setLevel(level=Constants.LOGGER_DEFAULT_LOG_LEVEL):
+    def setLevelExec(level=Constants.LOGGER_DEFAULT_LOG_LEVEL):
         logFormat = '%(asctime)-15s %(levelname)s:%(message)s'
         logging.basicConfig(format=logFormat)
         logger = logging.getLogger(Constants.LOGGER_NAME)
@@ -48,45 +67,47 @@ class LoggerUtility:
         return True
 
     @staticmethod
-    def logDebug(message, subject='Log4SDC DEBUG', userdata=''):
+    def logDebug(message, subject=Constants.LOGGER_NAME + ' DEBUG', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.debug('%s', message)
         return True
 
     @staticmethod
-    def logInfo(message, subject='Log4SDC INFO', userdata=''):
+    def logInfo(message, subject=Constants.LOGGER_NAME + ' INFO', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.info('%s', message)
         return True
 
     @staticmethod
-    def logWarning(message, subject='Log4SDC WARNING', userdata=''):
+    def logWarning(message, subject=Constants.LOGGER_NAME + ' WARNING', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.warning('%s', message)
         return True
 
     @staticmethod
-    def logError(message, subject='Log4SDC ERROR', userdata=''):
+    def logError(message, subject=Constants.LOGGER_NAME + ' ERROR', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.error('%s', message)
-        client = boto3.client('sns')
-        response = client.publish(TopicArn=os.environ['TOPIC_ARN_ERROR'], Subject=subject, Message=message)
+        client = boto3.client('sns', region_name='us-east-1')
+        if hasattr(LoggerUtility, 'config') and LoggerUtility.config['TOPIC_ARN_ERROR']:
+            response = client.publish(TopicArn=LoggerUtility.config['TOPIC_ARN_ERROR'], Subject=subject, Message=message)
         return True
 
     @staticmethod
-    def logCritical(message, subject='Log4SDC CRITICAL', userdata=''):
+    def logCritical(message, subject=Constants.LOGGER_NAME + ' CRITICAL', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.critical('%s', message)
-        client = boto3.client('sns')
-        response = client.publish(TopicArn=os.environ['TOPIC_ARN_CRITICAL'], Subject=subject, Message=message)
+        client = boto3.client('sns', region_name='us-east-1')
+        if hasattr(LoggerUtility, 'config') and LoggerUtility.config['TOPIC_ARN_CRITICAL']:
+            response = client.publish(TopicArn=LoggerUtility.config['TOPIC_ARN_CRITICAL'], Subject=subject, Message=message)
         return True
 
     @staticmethod
-    def alert(message, subject='Log4SDC ALERT', userdata=''):
+    def alert(message, subject=Constants.LOGGER_NAME + ' ALERT', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
         logger.error('%s', message)
-        client = boto3.client('sns')
-        response = client.publish(TopicArn=os.environ['TOPIC_ARN_ALERT'], Subject=subject, Message=message)
+        client = boto3.client('sns', region_name='us-east-1')
+        if hasattr(LoggerUtility, 'config') and LoggerUtility.config['TOPIC_ARN_ALERT']:
+            response = client.publish(TopicArn=LoggerUtility.config['TOPIC_ARN_ALERT'], Subject=subject, Message=message)
         return True
-
 

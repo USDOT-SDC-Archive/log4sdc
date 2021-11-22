@@ -68,6 +68,31 @@ resource "aws_sns_topic_subscription" "log4sdc_alert_topic_subscription" {
   endpoint  = local.support_email
 }
 
+resource "aws_ssm_parameter" "topic_arn_error" {
+  name  = "/log4sdc/TOPIC_ARN_ERROR"
+  type  = "String"
+  value = aws_sns_topic.log4sdc_error_topic.arn
+}
+
+resource "aws_ssm_parameter" "topic_arn_critical" {
+  name  = "/log4sdc/TOPIC_ARN_CRITICAL"
+  type  = "String"
+  value = aws_sns_topic.log4sdc_critical_topic.arn
+}
+
+resource "aws_ssm_parameter" "topic_arn_alert" {
+  name  = "/log4sdc/TOPIC_ARN_ALERT"
+  type  = "String"
+  value = aws_sns_topic.log4sdc_alert_topic.arn
+}
+
+resource "aws_ssm_parameter" "log_level" {
+  name  = "/log4sdc/LOG_LEVEL"
+  type  = "String"
+  value = "INFO"
+}
+
+
 # subscriptions and permissions - to go into lambda TFs
 #
 #resource "aws_sns_topic_subscription" "dot_sdc_metadata_ingestion_filter_lambda_subscription" {
