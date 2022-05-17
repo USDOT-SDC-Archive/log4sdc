@@ -1,12 +1,12 @@
 # Rollback Plan
 
-[v1.1](https://github.com/USDOT-SDC/log4sdc/tree/1.1)
+[v1.2](https://github.com/USDOT-SDC/log4sdc/tree/1.2)
 
 * Log on into the AWS Console for the SDC system account, navigate to the gitlab autoscaling group launch template configuration
 * Delete the latest template version so that the previous stable version becomes the latest
 * In the autoscaling group instance management view, initiate instance refresh.
 
-## Rollback of [v1.1](https://github.com/USDOT-SDC/log4sdc/tree/1.1)
+## Rollback of [v1.2](https://github.com/USDOT-SDC/log4sdc/tree/1.2)
 
 * Clone the log4sdc repository into a Linux environment (e.g., SDC build machine)
 * Change to the log4sdc folder
