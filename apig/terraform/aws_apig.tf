@@ -151,3 +151,9 @@ resource "aws_api_gateway_integration" "EnqueueIntegration" {
   }
 }
 
+resource "aws_ssm_parameter" "log4sdc_api_id" {
+  name  = "/log4sdc/API_ID"
+  type  = "String"
+  value = aws_api_gateway_rest_api.log4sdc-api.id  
+}
+
