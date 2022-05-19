@@ -9,7 +9,7 @@ terraform {
 
   # All backend values must be supplied at init-time
   backend "s3" {
-        key = "sdc-dot-webportal/log4sdc/apig/terraform/terraform.tfstate"
+        key = "log4sdc/apig/terraform/terraform.tfstate"
         region = "us-east-1"
   }
 }
