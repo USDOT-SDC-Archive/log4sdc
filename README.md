@@ -112,7 +112,7 @@ Logging, alert, and alarm facilities for the SDC Platform
   * Delete topics themselves.
 
 
-### log4sdc Lambda Payer Installation
+### log4sdc Lambda Layer Installation
 
 
 #### Deployment Plan
