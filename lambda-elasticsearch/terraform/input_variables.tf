@@ -40,7 +40,7 @@ locals {
   log_level             = var.log_level
 
   global_tags = {
-    "SourceRepo"  = "sdc-dot-cvp-metadata-ingestion"
+    "SourceRepo"  = "log4sdc"
     "Project"     = "SDC-Platform"
     "Team"        = "sdc-platform"
     "Environment" = "${data.aws_ssm_parameter.environment.value}"
