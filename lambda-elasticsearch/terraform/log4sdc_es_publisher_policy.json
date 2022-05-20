@@ -24,7 +24,10 @@
                 "sns:Publish",
                 "ec2:DescribeVolumeStatus",
                 "cloudtrail:CreateTrail",
-                "ec2:DescribeVolumes"
+                "ec2:DescribeVolumes",
+                "sqs:ReceiveMessage",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes"
             ],
             "Resource": "*"
         }

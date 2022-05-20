@@ -6,6 +6,10 @@
 - Terraform [v0.12.26](https://releases.hashicorp.com/terraform/0.12.26/)
 - AWS Provider [2.70.0](https://registry.terraform.io/providers/hashicorp/aws/2.70.0)
 
+## Prerequisite
+
+Lambda layer requests_aws4auth should be present in the environment. Distribution archive is located in s3://<lambda bin bucket>/requests_aws4auth/
+
 ## Deployment of [v1.2](https://github.com/USDOT-SDC/log4sdc/tree/1.2)
 
 * Clone the log4sdc repository into a Linux environment (e.g., SDC build machine)
