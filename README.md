@@ -2,6 +2,9 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=usdot-jpo-sdc_sdc-dot-webportal&metric=alert_status)](https://sonarcloud.io/dashboard?id=usdot-jpo-sdc_sdc-dot-webportal)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=usdot-jpo-sdc_sdc-dot-webportal&metric=coverage)](https://sonarcloud.io/dashboard?id=usdot-jpo-sdc_sdc-dot-webportal)
 
+# Archived
+This repo has been archived. Most of the code has been moved to: [USDOT-SDC/infrastructure/terraform/utilities/log4sdc](https://github.com/USDOT-SDC/infrastructure/tree/main/terraform/utilities/log4sdc)
+
 # log4sdc
 Logging, alert, and alarm facilities for the SDC Platform
 
